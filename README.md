@@ -1,76 +1,99 @@
 # Survivor Lab
 
-Unity로 만든 싱글 플레이 생존 액션 게임입니다. 적을 피하며 경험치를 모으고, 고유 주문 하나를 강화해 5분 동안 생존하세요. 직접 플레이와 AI 관전을 지원합니다.
+몰려오는 적을 피하면서 5분 동안 살아남는 게임입니다. Unity로 만들었고, 직접 플레이하거나 AI가 플레이하는 걸 지켜볼 수 있습니다.
 
 ![AI 플레이 화면](docs/media/gameplay.png)
 
-[플레이 영상 보기 · MP4](docs/media/gameplay.mp4)
-
 ![플레이 미리보기](docs/media/gameplay.gif)
 
-실제 Windows 빌드의 AI 관전 화면입니다. 영상은 게임 속도 2배 설정으로 촬영했으며, 경험치를 주입하지 않았습니다. GitHub에서 MP4가 바로 재생되지 않으면 파일 페이지에서 다운로드해 볼 수 있습니다.
+위 화면은 AI가 플레이하는 장면을 2배속으로 녹화한 것입니다. [MP4 영상](docs/media/gameplay.mp4)도 있습니다. GitHub에서 바로 재생되지 않으면 다운로드해서 보세요.
 
-## 실행
+## 바로 해보기
 
-Windows x64 빌드는 저장소의 [**Releases**](https://github.com/shinkm1104/survivor-lab-unity/releases/latest)에서 ZIP으로 제공합니다. 압축을 모두 푼 뒤 `SurvivorLab.exe`를 실행하세요. 실행 파일과 `SurvivorLab_Data`, `MonoBleedingEdge`, DLL 파일은 같은 폴더에 유지해야 합니다.
+1. [Releases](https://github.com/shinkm1104/survivor-lab-unity/releases/latest)에서 ZIP 파일을 받습니다.
+2. 압축을 풀고 `SurvivorLab.exe`를 실행합니다.
 
-소스만 받은 경우 아래 개발 방법으로 먼저 빌드하세요. 빌드가 있으면 `play.cmd`로 실행할 수 있습니다.
+압축을 푼 폴더 안의 파일은 다른 곳으로 옮기지 말고 그대로 두세요. exe 파일만 따로 꺼내면 실행되지 않습니다. 지금은 Windows 64비트만 지원합니다.
 
-| 조작 | 기능 |
+## 조작
+
+| 키 | 하는 일 |
 |---|---|
-| WASD / 방향키 | 이동 · 공격은 자동 |
-| 마우스 / 숫자 1·2·3 | 레벨업 보상 선택 |
-| Space | 일시 정지 / 재개 |
-| Esc | 메뉴 |
-| WATCH AI / AI 관전 | 이동과 보상을 AI가 자동 선택 |
-| Speed | 1·2·4배속 |
+| WASD 또는 방향키 | 이동 (공격은 자동) |
+| 1, 2, 3 또는 마우스 클릭 | 레벨업 보상 고르기 |
+| Space | 일시 정지 / 다시 시작 |
+| Esc | 메뉴로 |
 
-다른 창으로 전환하면 일시 정지됩니다. 돌아와서 Space를 누르면 재개합니다.
+다른 창을 누르면 게임이 멈춥니다. 돌아와서 Space를 누르면 이어서 할 수 있습니다.
 
-## 플레이
+## 게임 방법
 
-- **공명술사**: 주변에 원형 파동을 발생시킵니다.
-- **유도술사**: 가까운 적을 조준해 마법탄을 발사합니다.
-- **각인술사**: 이동한 자리에 돌을 남깁니다.
-- **충격술사**: 마지막 이동 방향으로 전방 충격파를 사용합니다.
+시작할 때 마법사 네 명 중 하나를 고릅니다. 마법사마다 공격 방식이 다릅니다.
 
-파란 경험치를 모으면 레벨이 오릅니다. 레벨업마다 보상 3개 중 하나를 선택하고, 레벨 7·14에는 속성을 추가합니다. 화염·번개·산성·냉기·암흑을 중복 강화하거나 조합할 수 있습니다. 60초마다 두루마리 보상이 제공됩니다.
+| 마법사 | 공격 |
+|---|---|
+| 공명술사 | 내 주변에 동그란 파동을 퍼뜨립니다 |
+| 유도술사 | 가장 가까운 적에게 마법탄을 쏩니다 |
+| 각인술사 | 지나간 자리에 돌을 남기고, 돌에 닿은 적이 피해를 입습니다 |
+| 충격술사 | 마지막으로 움직인 방향 앞쪽으로 충격파를 날립니다 |
+
+적을 쓰러뜨리면 파란 구슬(경험치)이 떨어집니다. 구슬을 모아 레벨이 오르면 강화 카드 3장 중 하나를 고릅니다.
+
+- 레벨 7과 14에는 공격에 속성을 붙입니다. 화염, 번개, 산성, 냉기, 암흑 중에서 고르고, 같은 속성을 두 번 고르거나 서로 다른 속성을 섞을 수 있습니다.
+- 1분마다 특수 효과가 있는 두루마리를 하나 고릅니다.
+- 300초를 버티면 승리합니다.
 
 ## AI 관전
 
-메뉴에서 클래스를 고르고 **WATCH AI**를 누르세요. 보상도 자동 선택하므로 관전 중 수동 입력이 필요하지 않습니다.
+메뉴에서 마법사를 고르고 **WATCH AI**를 누르면 AI가 대신 플레이합니다. 이동도 보상 선택도 AI가 알아서 하니까 지켜보기만 하면 됩니다.
 
-- 이동: 표 기반 Q-learning 정책.
-- 보상 선택: 사전 학습한 REINFORCE 정책. `판단` 버튼으로 규칙 기반 선택과 전환할 수 있습니다.
-- `보상 자동`을 끄면 보상을 직접 선택할 수 있습니다.
-- `TRAIN +400 episodes`는 이동 정책을 추가 학습합니다. 보상 정책을 재학습하는 버튼은 아닙니다.
-- 학습 정책은 모든 클래스의 생존 성공을 보장하지 않습니다.
+- 이동은 강화학습(Q-learning)으로 학습한 정책을 씁니다.
+- 보상 카드는 따로 학습한 정책(REINFORCE)으로 고릅니다. 화면 오른쪽 `판단` 버튼을 누르면 미리 정해둔 규칙으로 고르게 바꿀 수 있습니다.
+- `보상 자동`을 끄면 이동은 AI가 하고 카드는 내가 고릅니다.
+- 게임 중에 `직접 조작` 버튼을 누르면 바로 내가 조종할 수 있습니다.
+- 메뉴의 `TRAIN +400 episodes`는 이동 AI를 400판 더 학습시킵니다. 보상 선택 AI는 학습시키지 않습니다.
 
-사용자 이동 정책은 `%USERPROFILE%\AppData\LocalLow\Independent Lab\Survivor Lab\policy-v2.json`에 저장됩니다. 이 파일을 별도로 옮기면 다음 실행에서 번들 초기 정책을 사용합니다.
+AI가 항상 이기지는 않습니다. 특히 충격술사는 AI가 잘 못 다룹니다. 이유는 [밸런스 보고서](docs/reports/balance-report.md)에 정리했습니다.
 
-## 개발 · 빌드
+추가로 학습한 이동 AI는 `%USERPROFILE%\AppData\LocalLow\Independent Lab\Survivor Lab\policy-v2.json`에 저장됩니다. 이 파일을 지우면 처음 들어 있던 AI로 돌아갑니다.
 
-Unity **6000.0.74f1**, Windows x64, 기본 렌더 파이프라인을 사용합니다. Unity Hub에서 해당 Editor와 Windows 빌드 모듈을 설치하고 프로젝트를 추가하세요.
+## 밸런스 측정 결과
+
+여러 플레이 방식으로 총 984판을 자동으로 돌려봤습니다. 아래 표는 그중 게임에 들어 있는 AI로 플레이한 판(마법사마다 40판)의 생존율입니다.
+
+| 공명술사 | 유도술사 | 각인술사 | 충격술사 |
+|---:|---:|---:|---:|
+| 100% | 97.5% | 82.5% | 0% |
+
+공명술사와 유도술사는 가만히 서 있어도 거의 다 이기고, 어떤 마법사든 계속 도망만 다니면 이깁니다. 자세한 내용, 실패한 판을 그대로 다시 돌려본 기록, 개선 방향은 [보고서](docs/reports/balance-report.md)에 있습니다.
+
+## 직접 빌드하기
+
+필요한 것은 Unity **6000.0.74f1**과 Windows Build Support 모듈입니다. Unity Hub에서 설치하세요.
 
 ```bat
-open-unity.cmd
-build.cmd --verify
-build.cmd
-play.cmd
+open-unity.cmd      :: Unity 에디터로 프로젝트 열기
+build.cmd --verify  :: 게임 규칙 테스트만 실행
+build.cmd           :: Builds\Windows 에 실행 파일 만들기
+play.cmd            :: 빌드한 게임 실행
+balance.cmd         :: 밸런스 측정 (결과는 docs\reports\data)
 ```
 
-Editor 설치 경로가 다르면 `UNITY_EDITOR` 환경 변수에 `Unity.exe`의 전체 경로를 지정하세요. Unity Hub 기본 설치 위치와 로컬 `Tools` 위치도 자동으로 확인합니다.
+Unity를 다른 경로에 설치했다면 `UNITY_EDITOR` 환경 변수에 `Unity.exe`의 전체 경로를 넣어주세요. 빌드할 때마다 게임 규칙 테스트가 먼저 돌고, 로그는 `Logs/build.log`에 남습니다.
 
-기본 빌드는 개발용 진단 기능을 제외한 배포용 빌드입니다. `build.cmd --development`로 만든 빌드에서는 `SurvivorLab.exe -batchmode -nographics --qa` 검증을 실행할 수 있습니다. 빌드 과정에서도 동일한 게임 규칙 검증을 실행하며, 로그는 `Logs/build.log`에 저장됩니다.
+실패한 판을 다시 보고 싶으면 `balance.cmd --replay 클래스 시드`를 실행하세요. 예를 들어 `balance.cmd --replay 3 90210`은 충격술사 AI가 36.4초에 죽는 판을 똑같이 다시 돌리고, 2초마다 체력과 주변 적 수를 출력합니다.
 
-| 위치 | 내용 |
+### 코드 위치
+
+| 파일 | 내용 |
 |---|---|
-| `Assets/Scripts/Simulation.cs` | 전투 · 성장 · 보상 |
-| `Assets/Scripts/ElementEffects.cs` | 속성 · 상태 이상 |
-| `Assets/Scripts/GameApp.cs` | 입력 · UI · 렌더링 |
-| `Assets/Scripts/Learning.cs` | 이동 학습 |
-| `Assets/Scripts/RewardLearning.cs` | 보상 선택 정책 |
-| `Assets/StreamingAssets/balance.json` | 플레이 수치 설정 |
-| `ArtSource/` | 픽셀 아트 생성 스크립트 |
+| `Assets/Scripts/Simulation.cs` | 전투, 레벨업, 보상 |
+| `Assets/Scripts/ElementEffects.cs` | 속성 효과 |
+| `Assets/Scripts/GameApp.cs` | 입력, 화면, UI |
+| `Assets/Scripts/Learning.cs` | 이동 AI 학습 |
+| `Assets/Scripts/RewardLearning.cs` | 보상 선택 AI |
+| `Assets/Editor/BalanceLab.cs` | 밸런스 측정, 실패 재현 |
+| `Assets/StreamingAssets/balance.json` | 체력, 속도, 피해량 같은 수치 |
+| `ArtSource/` | 픽셀 아트 생성 스크립트 ([ART.md](ART.md)) |
 
-수치 설정을 바꾸면 기존 학습 정책의 성능도 달라질 수 있습니다. 아트 구성과 재생성 방법은 [ART.md](ART.md)를 참고하세요.
+`balance.json`의 수치를 바꾸면 이미 학습된 AI가 예전만큼 잘 못할 수 있습니다. 바꾼 뒤에는 `balance.cmd`로 다시 측정해 보세요.
