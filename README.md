@@ -12,7 +12,7 @@ Unity로 만든 싱글 플레이 생존 액션 게임입니다. 적을 피하며
 
 ## 실행
 
-Windows x64 빌드는 저장소의 **Releases**에서 ZIP으로 제공합니다. 압축을 모두 푼 뒤 `SurvivorLab.exe`를 실행하세요. 실행 파일과 `SurvivorLab_Data`, `MonoBleedingEdge`, DLL 파일은 같은 폴더에 유지해야 합니다.
+Windows x64 빌드는 저장소의 [**Releases**](https://github.com/shinkm1104/survivor-lab-unity/releases/latest)에서 ZIP으로 제공합니다. 압축을 모두 푼 뒤 `SurvivorLab.exe`를 실행하세요. 실행 파일과 `SurvivorLab_Data`, `MonoBleedingEdge`, DLL 파일은 같은 폴더에 유지해야 합니다.
 
 소스만 받은 경우 아래 개발 방법으로 먼저 빌드하세요. 빌드가 있으면 `play.cmd`로 실행할 수 있습니다.
 
