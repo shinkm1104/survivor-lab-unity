@@ -1,0 +1,939 @@
+{
+  "version": 2,
+  "playerHp": 100,
+  "playerSpeed": 5,
+  "enemyHp": 12,
+  "enemySpeed": 1.6,
+  "contactDamage": 3,
+  "contactCooldown": 1,
+  "spawnInterval": 0.65,
+  "enemyXp": 4,
+  "maxEnemies": 100,
+  "pickupRadius": 2.5,
+  "potionHealPercent": 20,
+  "scrollPeriod": 60,
+  "offerCount": 3,
+  "duration": 300,
+  "baseDodge": 5,
+  "baseCrit": 5,
+  "baseCritMultiplier": 1.5,
+  "stationaryThreshold": 0.01,
+  "movementFloor": 0.25,
+  "xpScale": 1,
+  "upgradePercent": [
+    10,
+    15,
+    25,
+    35
+  ],
+  "pulseSizePercent": [
+    0,
+    17,
+    27,
+    38
+  ],
+  "commonHp": [
+    10,
+    15,
+    25,
+    35
+  ],
+  "commonSpeed": [
+    4,
+    6,
+    8,
+    10
+  ],
+  "rarityWeights": [
+    71,
+    25,
+    4,
+    0
+  ],
+  "spells": [
+    {
+      "id": "pulse",
+      "name": "공명술사 / 원형 파동",
+      "damage": 5.07299995,
+      "fireRate": 1.79775286,
+      "radius": 2.5,
+      "range": 0,
+      "speed": 0,
+      "life": 0,
+      "spacing": 0,
+      "length": 0,
+      "width": 0,
+      "telegraph": 0
+    },
+    {
+      "id": "orb",
+      "name": "유도술사 / 추적 마법탄",
+      "damage": 17.0,
+      "fireRate": 1.150305986,
+      "radius": 0.3,
+      "range": 10,
+      "speed": 12,
+      "life": 2,
+      "spacing": 0,
+      "length": 0,
+      "width": 0,
+      "telegraph": 0
+    },
+    {
+      "id": "trail",
+      "name": "각인술사 / 돌 자취",
+      "damage": 3.3810001,
+      "fireRate": 2,
+      "radius": 0.65,
+      "range": 0,
+      "speed": 0,
+      "life": 2.3,
+      "spacing": 0.6,
+      "length": 0,
+      "width": 0,
+      "telegraph": 0
+    },
+    {
+      "id": "slam",
+      "name": "충격술사 / 전방 충격파",
+      "damage": 18.0,
+      "fireRate": 0.35,
+      "radius": 0,
+      "range": 0,
+      "speed": 0,
+      "life": 0,
+      "spacing": 0,
+      "length": 5,
+      "width": 3,
+      "telegraph": 0.3
+    }
+  ],
+  "xpSegments": [
+    {
+      "minLevel": 1,
+      "baseValue": 4.1,
+      "growth": 0
+    },
+    {
+      "minLevel": 15,
+      "baseValue": 4.7,
+      "growth": 0
+    },
+    {
+      "minLevel": 30,
+      "baseValue": 5.74,
+      "growth": 0
+    },
+    {
+      "minLevel": 60,
+      "baseValue": 5.74,
+      "growth": 0.1
+    }
+  ],
+  "scrolls": [
+    {
+      "id": "blood_speed",
+      "name": "위기 질주",
+      "description": "체력 결손 비율에 따라 이동 속도 최대 +21%",
+      "values": [
+        {
+          "key": "maxMoveSpeedBonusPercent",
+          "value": 21
+        }
+      ]
+    },
+    {
+      "id": "bulwark",
+      "name": "성장 갑주",
+      "description": "현재 레벨만큼 방어력 증가",
+      "values": [
+        {
+          "key": "armorPerLevel",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "hard_lessons",
+      "name": "생존 본능",
+      "description": "체력 결손 비율에 따라 XP 최대 +40%",
+      "values": [
+        {
+          "key": "maxXpBonusPercent",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "evasion_mend",
+      "name": "회피 회복",
+      "description": "회피한 피해의 20% 회복",
+      "values": [
+        {
+          "key": "healAvoidedDamagePercent",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "id": "healthy_growth",
+      "name": "성장 회복",
+      "description": "레벨업 시 최대 HP 10% 회복",
+      "values": [
+        {
+          "key": "healMaxHpPercent",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "offensive_defense",
+      "name": "공방 전환",
+      "description": "방어력당 피해 +1%, 이동 속도 -0.25%",
+      "values": [
+        {
+          "key": "damagePercentPerArmor",
+          "value": 1
+        },
+        {
+          "key": "moveSpeedPercentPerArmor",
+          "value": -0.25
+        }
+      ]
+    },
+    {
+      "id": "vital_strike",
+      "name": "치명 회복",
+      "description": "실제 치명타 피해의 0.3% 회복",
+      "values": [
+        {
+          "key": "healActualCritDamagePercent",
+          "value": 0.3
+        }
+      ]
+    },
+    {
+      "id": "elixir_permanence",
+      "name": "생명 용기",
+      "description": "물약 획득마다 최대 HP +40 (이번 런)",
+      "values": [
+        {
+          "key": "maxHpPerPotion",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "mana_siphon",
+      "name": "수집 회복",
+      "description": "XP 오브당 15% 확률로 HP 1 회복",
+      "values": [
+        {
+          "key": "chancePercent",
+          "value": 15
+        },
+        {
+          "key": "healHp",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "humble_refinement",
+      "name": "기초 단련",
+      "description": "일반 강화 선택 시 치명타 배율 +1%p",
+      "values": [
+        {
+          "key": "critMultiplierPercentagePointsPerCommonChoice",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "second_breath",
+      "name": "고요한 발걸음",
+      "description": "정지 매초 +1스택, 이동 매초 -1. 최대 5, 속도 +6%/스택",
+      "values": [
+        {
+          "key": "tickSeconds",
+          "value": 1
+        },
+        {
+          "key": "maxStacks",
+          "value": 5
+        },
+        {
+          "key": "moveSpeedPercentPerStack",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "id": "fight_or_flight",
+      "name": "긴급 가속",
+      "description": "HP 피격 시 속도 +30%, 2초, 쿨다운 7초",
+      "values": [
+        {
+          "key": "moveSpeedPercent",
+          "value": 30
+        },
+        {
+          "key": "durationSeconds",
+          "value": 2
+        },
+        {
+          "key": "cooldownFromActivationSeconds",
+          "value": 7
+        }
+      ]
+    },
+    {
+      "id": "regeneration",
+      "name": "재생",
+      "description": "5초마다 최대 HP 1% 회복",
+      "values": [
+        {
+          "key": "periodSeconds",
+          "value": 5
+        },
+        {
+          "key": "healMaxHpPercent",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "shield",
+      "name": "보호막",
+      "description": "30초마다 최대 HP 10% 보호막, 남아 있으면 건너뜀",
+      "values": [
+        {
+          "key": "periodSeconds",
+          "value": 30
+        },
+        {
+          "key": "maxHpPercent",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "attraction",
+      "name": "흡인",
+      "description": "XP 및 일반 드롭 획득 반경 +40%",
+      "values": [
+        {
+          "key": "pickupRadiusPercent",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "enlightenment",
+      "name": "깨달음",
+      "description": "XP 획득량 +15%",
+      "values": [
+        {
+          "key": "xpPercent",
+          "value": 15
+        }
+      ]
+    },
+    {
+      "id": "last_stand",
+      "name": "배수진",
+      "description": "HP 30% 이하에서 피해 +30%",
+      "values": [
+        {
+          "key": "hpRatioThresholdInclusive",
+          "value": 0.3
+        },
+        {
+          "key": "damagePercent",
+          "value": 30
+        }
+      ]
+    },
+    {
+      "id": "focus",
+      "name": "집중",
+      "description": "1.5초 정지하면 공격 간격 -30%, 이동 시 해제",
+      "values": [
+        {
+          "key": "stationaryDelaySeconds",
+          "value": 1.5
+        },
+        {
+          "key": "finalAttackIntervalMultiplier",
+          "value": 0.7
+        }
+      ]
+    },
+    {
+      "id": "frost_mark",
+      "name": "서리 문양",
+      "description": "적중 시 20% 둔화 1.5초, 시간만 갱신",
+      "values": [
+        {
+          "key": "slowPercent",
+          "value": 20
+        },
+        {
+          "key": "durationSeconds",
+          "value": 1.5
+        }
+      ]
+    }
+  ],
+  "magnetRadius": 6,
+  "magnetSpeed": 12,
+  "spawnRadius": 13,
+  "arenaHalfExtent": 32,
+  "potionEveryKills": 20,
+  "infusionLevels": [
+    7,
+    14
+  ],
+  "elements": [
+    {
+      "id": "Fire",
+      "name": "화염",
+      "burnFactor": 0.33000001311302185,
+      "burnTicks": 3,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 33% 화상 ×3회 (0.5초 간격)"
+    },
+    {
+      "id": "FireDouble",
+      "name": "강화 화염",
+      "burnFactor": 0.44999998807907104,
+      "burnTicks": 5,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 45% 화상 ×5회 (0.5초 간격)"
+    },
+    {
+      "id": "Lightning",
+      "name": "번개",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "주변 적 2명에 50% 연쇄 번개"
+    },
+    {
+      "id": "LightningDouble",
+      "name": "강화 번개",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 1.4500000476837158,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "주변 적 2명에 50% 연쇄 번개\n원래 대상에게 추가 낙뢰 145%"
+    },
+    {
+      "id": "FireLightning",
+      "name": "화염 + 번개",
+      "burnFactor": 0.33000001311302185,
+      "burnTicks": 3,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 33% 화상 ×3회 (0.5초 간격)\n주변 적 2명에 50% 연쇄 번개"
+    },
+    {
+      "id": "Acid",
+      "name": "산성",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "3초간 받는 피해 +25% [우리 규칙]"
+    },
+    {
+      "id": "AcidDouble",
+      "name": "강화 산성",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 10.000000149011612,
+      "corruptionSpreadFactor": 0,
+      "description": "3초간 받는 피해 +25% [우리 규칙]\n대상의 공격력 -10%"
+    },
+    {
+      "id": "AcidFire",
+      "name": "화염 + 산성",
+      "burnFactor": 0.33000001311302185,
+      "burnTicks": 3,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0.25,
+      "splashRadius": 2.0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 33% 화상 ×3회 (0.5초 간격)\n3초간 받는 피해 +25% [우리 규칙]\n적중 위치에 피해 25% 범위 폭발"
+    },
+    {
+      "id": "AcidLightning",
+      "name": "번개 + 산성",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "주변 적 2명에 50% 연쇄 번개\n3초간 받는 피해 +25% [우리 규칙]"
+    },
+    {
+      "id": "Ice",
+      "name": "얼음",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 4.0,
+      "slowPercent": 35,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "4초간 이동 속도 -35% [우리 규칙]"
+    },
+    {
+      "id": "IceDouble",
+      "name": "강화 얼음",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 4.0,
+      "slowPercent": 35,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0.5,
+      "freezeDuration": 2.0,
+      "freezeImmunity": 2.0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "4초간 이동 속도 -35% [우리 규칙]\n50% 확률로 2초 빙결"
+    },
+    {
+      "id": "FireIce",
+      "name": "화염 + 얼음",
+      "burnFactor": 0.33000001311302185,
+      "burnTicks": 3,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 4.0,
+      "slowPercent": 35,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 1,
+      "freezeDuration": 4.0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 8.0,
+      "knockbackDuration": 0.4000000059604645,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 33% 화상 ×3회 (0.5초 간격)\n4초간 이동 속도 -35% [우리 규칙]\n100% 확률로 4초 빙결\n적중 시 밀쳐내기"
+    },
+    {
+      "id": "AcidIce",
+      "name": "산성 + 얼음",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 4.0,
+      "slowPercent": 35,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 8.0,
+      "knockbackDuration": 0.4000000059604645,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "3초간 받는 피해 +25% [우리 규칙]\n4초간 이동 속도 -35% [우리 규칙]\n적중 시 밀쳐내기"
+    },
+    {
+      "id": "IceLightning",
+      "name": "번개 + 얼음",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 4.0,
+      "slowPercent": 35,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 0,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "주변 적 2명에 50% 연쇄 번개\n4초간 이동 속도 -35% [우리 규칙]"
+    },
+    {
+      "id": "Dark",
+      "name": "암흑",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 1.5,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "표식 적 처치 시 150.0% 폭발 [우리 규칙]"
+    },
+    {
+      "id": "DarkDouble",
+      "name": "강화 암흑",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 2.625,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 1.0,
+      "description": "표식 적 처치 시 262.5% 폭발 [우리 규칙]\n폭발로 주변 적에게 표식 전파"
+    },
+    {
+      "id": "DarkFire",
+      "name": "화염 + 암흑",
+      "burnFactor": 0.33000001311302185,
+      "burnTicks": 3,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 1.5,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "적중 피해의 33% 화상 ×3회 (0.5초 간격)\n표식 적 처치 시 150.0% 폭발 [우리 규칙]"
+    },
+    {
+      "id": "DarkLightning",
+      "name": "번개 + 암흑",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 2,
+      "chainFactor": 0.5,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 1.5,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "주변 적 2명에 50% 연쇄 번개\n표식 적 처치 시 150.0% 폭발 [우리 규칙]"
+    },
+    {
+      "id": "AcidDark",
+      "name": "산성 + 암흑",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 3.0,
+      "vulnerabilityPercent": 25,
+      "chillDuration": 0,
+      "slowPercent": 0,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 1.5,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "3초간 받는 피해 +25% [우리 규칙]\n표식 적 처치 시 150.0% 폭발 [우리 규칙]"
+    },
+    {
+      "id": "DarkIce",
+      "name": "얼음 + 암흑",
+      "burnFactor": 0,
+      "burnTicks": 0,
+      "burnInterval": 0.5,
+      "acidDuration": 0,
+      "vulnerabilityPercent": 0,
+      "chillDuration": 2.0,
+      "slowPercent": 35,
+      "chainJumps": 0,
+      "chainFactor": 0,
+      "chainRange": 6,
+      "extraStrikeFactor": 0,
+      "freezeChance": 0,
+      "freezeDuration": 0,
+      "freezeImmunity": 0,
+      "corruptionFactor": 1.5,
+      "explosionRadius": 2.5,
+      "splashFactor": 0,
+      "splashRadius": 0,
+      "knockbackSpeed": 0,
+      "knockbackDuration": 0,
+      "enemyDamageReductionPercent": 0,
+      "corruptionSpreadFactor": 0,
+      "description": "2초간 이동 속도 -35% [우리 규칙]\n표식 적 처치 시 150.0% 폭발 [우리 규칙]"
+    }
+  ]
+}
