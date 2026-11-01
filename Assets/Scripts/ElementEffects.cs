@@ -13,7 +13,7 @@ namespace SurvivorLab {
             float actual=Mathf.Min(e.hp,amount); e.hp-=amount; damageDealt+=actual;
             if(critical) Heal(actual*Param("vital_strike","healActualCritDamagePercent")/100);
             if(e.hp<=0) {
-                kills++; drops.Add(new Drop{pos=e.pos,xp=b.enemyXp});
+                kills++; drops.Add(new Drop{pos=e.pos,xp=b.HasWaves && Wave.xp>0?Wave.xp:b.enemyXp});
                 if(kills%b.potionEveryKills==0) drops.Add(new Drop{pos=e.pos+Vector2.right*0.2f,potion=true});
                 if(e.corruptionDamage>0) {
                     deathExplosions.Enqueue(new ElementVisual{from=e.pos,radius=b.Element("Dark").explosionRadius,expires=time+0.3f,spreadDamage=e.corruptionSpreadDamage});

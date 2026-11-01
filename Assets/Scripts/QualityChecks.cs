@@ -129,6 +129,24 @@ namespace SurvivorLab {
             q.explore=false; Check(q.Select(s)==qa && q.Select(s)==qa,"greedy learned choice is deterministic");
             bool rejected=false; try { new RewardLearner(new RewardPolicyFile{cards=learner.data.cards,weights=new float[3],baseline=new float[RewardLearner.BaselineSize]},1); } catch(Exception) { rejected=true; }
             Check(rejected,"reward policy with wrong feature size is rejected");
+            if(b.HasWaves) {
+                s=new Simulation(b,2,700);
+                for(int i=0;i<100;i++) s.Step(Vector2.zero,0.05f,true);
+                Check(s.enemies.Count>=b.waves[0].minEnemies,"spawner refills to wave minimum");
+                Check(s.WaveNumber==1 && Near(b.WaveAt(b.waves[1].start).start,b.waves[1].start),"wave lookup by time");
+                s=new Simulation(b,2,701); e=new Enemy{id=999,hp=10,pos=new Vector2(b.despawnDistance+1,0)}; s.enemies.Add(e);
+                s.Step(Vector2.zero,0.05f,true);
+                Check(!s.enemies.Contains(e) && s.kills==0 && s.drops.Count==0,"far straggler recycled without XP");
+                var line=b.lineEvents[0]; s=new Simulation(b,2,702); s.time=line.time-0.01f; s.Step(Vector2.zero,0.05f,true);
+                var sweepers=s.enemies.FindAll(x=>x.Sweeping);
+                int slots=Mathf.FloorToInt(2*b.lineHalfLength/b.lineSpacing)+1;
+                Check(sweepers.Count>0 && sweepers.Count<slots,"line event spawns a wall with a gap");
+                // Reward picks pause the clock, so advance by time rather than a fixed step count.
+                float leaveAt=sweepers[0].sweepUntil; int guardSteps=0;
+                while(s.time<=leaveAt+0.05f && !s.Done && guardSteps++<2000) { s.player=Vector2.one*30; s.enemies.RemoveAll(x=>!x.Sweeping); s.Step(Vector2.zero,0.05f,true); }
+                Check(!s.enemies.Exists(x=>x.Sweeping),"line enemies leave after their sweep");
+                Check(s.kills==0,"line enemies that leave give no kills");
+            }
             Console.WriteLine("QA COMPLETE: "+count+" checks passed");
         }
     }

@@ -17,6 +17,13 @@ namespace SurvivorLab {
         public float radius, range, speed, life, spacing, length, width, telegraph;
     }
     [Serializable] public class XpSegment { public int minLevel; public float baseValue, growth; }
+    // Active from `start` seconds until the next wave. The spawner keeps at least minEnemies alive.
+    [Serializable] public class WaveDefinition {
+        public float start, spawnInterval, hpScale = 1, speedScale = 1, damageScale = 1, xp, blockChance, fastChance;
+        public int minEnemies, perSpawn = 1;
+    }
+    // A straight wall of enemies that sweeps past the player with one gap in it.
+    [Serializable] public class LineEventDefinition { public float time, gap; }
     [Serializable] public class ElementDefinition {
         public string id, name, description;
         public float burnFactor, burnInterval, acidDuration, vulnerabilityPercent, chillDuration, slowPercent;
@@ -40,6 +47,16 @@ namespace SurvivorLab {
         public ElementDefinition[] elements;
         public float magnetRadius, magnetSpeed, spawnRadius, arenaHalfExtent;
         public int potionEveryKills;
+        public WaveDefinition[] waves;
+        public LineEventDefinition[] lineEvents;
+        public float topUpInterval, fastSpeedMultiplier, fastHpMultiplier, blockSpreadDegrees, despawnDistance;
+        public float lineSpeed, lineSpacing, lineDistance, lineHalfLength;
+        public bool HasWaves { get { return waves != null && waves.Length > 0; } }
+        public WaveDefinition WaveAt(float time) {
+            var current = waves[0];
+            foreach (var w in waves) if (time >= w.start) current = w;
+            return current;
+        }
         public ElementDefinition Element(string id) { return Array.Find(elements,x=>x.id==id); }
         public ElementDefinition CombinedElement(string first,string second) {
             if(string.IsNullOrEmpty(first)) return null;

@@ -19,7 +19,7 @@ namespace SurvivorLab.Editor {
         public sealed class Run {
             public int cls, seed; public string mover, chooser;
             public bool won; public float time, damageDealt, damageTaken, maxHp, minHpRatio = 1;
-            public int level, kills, peakEnemies, scrolls, upgradesTaken; public float capReachedAt = -1, level7At = -1, level14At = -1;
+            public int level, kills, wave, peakEnemies, scrolls, upgradesTaken; public float capReachedAt = -1, level7At = -1, level14At = -1;
             public string infusions = "", cause = "", choices = "";
             public int nearAtDeath, contactAtDeath, slams, slamWhiffs, slamBackward; public float wallTime; public float wallDistAtDeath, damageLast15;
             public List<Sample> trace = new List<Sample>();
@@ -59,7 +59,8 @@ namespace SurvivorLab.Editor {
         static PolicyFile movePolicy; static RewardPolicyFile rewardPolicy;
         static void LoadPolicies() {
             if (movePolicy != null) return;
-            movePolicy = JsonUtility.FromJson<PolicyFile>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath, "initial-policy-v2.json")));
+            string policyPath = Arg("-policy", Path.Combine(Application.streamingAssetsPath, "initial-policy-v2.json"));
+            movePolicy = JsonUtility.FromJson<PolicyFile>(File.ReadAllText(policyPath));
             rewardPolicy = JsonUtility.FromJson<RewardPolicyFile>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath, "reward-policy.json")));
         }
         static IMover Mover(string name) {
@@ -121,7 +122,7 @@ namespace SurvivorLab.Editor {
                     run.trace.Add(new Sample { t = s.time, hp = s.hp, maxHp = s.maxHp, x = s.player.x, y = s.player.y, enemies = s.enemies.Count, near = Near(s, 3), level = s.level, kills = s.kills });
                 }
             }
-            run.won = s.won; run.time = s.time; run.level = s.level; run.kills = s.kills; run.maxHp = s.maxHp;
+            run.won = s.won; run.time = s.time; run.wave = s.WaveNumber; run.level = s.level; run.kills = s.kills; run.maxHp = s.maxHp;
             run.damageDealt = s.damageDealt; run.damageTaken = s.damageTaken; run.scrolls = s.owned.Count;
             run.infusions = string.Join("+", s.infusions.ToArray()); run.choices = choices.ToString();
             run.upgradesTaken = s.automaticChoices;
@@ -151,9 +152,9 @@ namespace SurvivorLab.Editor {
                 for (int i = 0; i < seeds; i++) runs.Add(Play(b, cls, 1000 + i, c[0], c[1]));
                 runs.Add(Play(b, cls, GameSeed, c[0], c[1]));
             }
-            var csv = new StringBuilder("class,className,seed,mover,chooser,won,time,level,kills,damageDealt,dps,damageTaken,maxHp,minHpRatio,peakEnemies,capReachedAt,level7At,level14At,scrolls,infusions,cause,nearAtDeath,contactAtDeath,wallDistAtDeath,damageLast15,wallTimeRatio,slams,slamWhiffRate,slamBackwardRate,choices\n");
+            var csv = new StringBuilder("class,className,seed,mover,chooser,won,time,wave,level,kills,damageDealt,dps,damageTaken,maxHp,minHpRatio,peakEnemies,capReachedAt,level7At,level14At,scrolls,infusions,cause,nearAtDeath,contactAtDeath,wallDistAtDeath,damageLast15,wallTimeRatio,slams,slamWhiffRate,slamBackwardRate,choices\n");
             foreach (var r in runs)
-                csv.AppendLine(string.Join(",", new[] { r.cls.ToString(), ClassNames[r.cls], r.seed.ToString(), r.mover, r.chooser, r.won ? "1" : "0", F(r.time), r.level.ToString(), r.kills.ToString(), F(r.damageDealt), F(r.damageDealt / Mathf.Max(1, r.time)), F(r.damageTaken), F(r.maxHp), F(r.minHpRatio), r.peakEnemies.ToString(), F(r.capReachedAt), F(r.level7At), F(r.level14At), r.scrolls.ToString(), r.infusions, r.cause, r.nearAtDeath.ToString(), r.contactAtDeath.ToString(), F(r.wallDistAtDeath), F(r.damageLast15), F(r.wallTime / Mathf.Max(1, r.time)), r.slams.ToString(), F(r.slamWhiffs / (float)Mathf.Max(1, r.slams)), F(r.slamBackward / (float)Mathf.Max(1, r.slams)), Csv(r.choices) }));
+                csv.AppendLine(string.Join(",", new[] { r.cls.ToString(), ClassNames[r.cls], r.seed.ToString(), r.mover, r.chooser, r.won ? "1" : "0", F(r.time), r.wave.ToString(), r.level.ToString(), r.kills.ToString(), F(r.damageDealt), F(r.damageDealt / Mathf.Max(1, r.time)), F(r.damageTaken), F(r.maxHp), F(r.minHpRatio), r.peakEnemies.ToString(), F(r.capReachedAt), F(r.level7At), F(r.level14At), r.scrolls.ToString(), r.infusions, r.cause, r.nearAtDeath.ToString(), r.contactAtDeath.ToString(), F(r.wallDistAtDeath), F(r.damageLast15), F(r.wallTime / Mathf.Max(1, r.time)), r.slams.ToString(), F(r.slamWhiffs / (float)Mathf.Max(1, r.slams)), F(r.slamBackward / (float)Mathf.Max(1, r.slams)), Csv(r.choices) }));
             File.WriteAllText(Path.Combine(outDir, "runs.csv"), csv.ToString(), new UTF8Encoding(true));
             var sum = new StringBuilder("mover,chooser,class,className,runs,wins,winRate,meanTime,medianDeath,meanLevel,meanKills,meanDps\n");
             foreach (var g in runs.Where(r => r.seed != GameSeed).GroupBy(r => r.mover + "," + r.chooser + "," + r.cls)) {
@@ -163,6 +164,22 @@ namespace SurvivorLab.Editor {
             File.WriteAllText(Path.Combine(outDir, "summary.csv"), sum.ToString(), new UTF8Encoding(true));
             Console.WriteLine(sum.ToString());
             Console.WriteLine("BALANCE MEASURE DONE: " + runs.Count + " runs in " + clock.Elapsed.TotalSeconds.ToString("F1") + "s -> " + outDir);
+        }
+
+        // Continues movement Q-learning on the current balance with the game's Trainer and saves to -save.
+        public static void Train() {
+            var b = Balance.Load(); LoadPolicies();
+            int episodes = int.Parse(Arg("-episodes", "8000"));
+            string save = Path.GetFullPath(Arg("-save", "Logs/policy-trained.json"));
+            var agent = new Learning(); agent.Use(movePolicy);
+            var trainer = new Trainer(b, agent, episodes, new RewardLearner(rewardPolicy, 1));
+            var clock = System.Diagnostics.Stopwatch.StartNew(); int reported = 0;
+            while (trainer.active) {
+                trainer.Pump(20000);
+                if (trainer.completed >= reported + 1000) { reported = trainer.completed; Console.WriteLine("TRAIN " + reported + "/" + episodes + " last=" + F(trainer.lastSurvival) + "s " + clock.Elapsed.TotalSeconds.ToString("F0") + "s"); }
+            }
+            agent.Save(save);
+            Console.WriteLine("TRAIN DONE: " + episodes + " episodes, states=" + agent.data.rows.Count + " -> " + save);
         }
 
         // Re-runs one failure twice: identical results prove the failure reproduces from (class, seed, mover, chooser).

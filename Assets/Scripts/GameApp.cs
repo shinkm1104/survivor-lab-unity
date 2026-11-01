@@ -210,8 +210,9 @@ namespace SurvivorLab {
                 if(sim.time<e.acidUntil) tint=sprite?new Color(0.6f,1,0.45f):Color.green;
                 if(e.corruptionDamage>0) tint=sprite?new Color(0.82f,0.5f,1):new Color(0.7f,0.2f,1);
                 if(sim.time<e.frozenUntil) tint=sprite?new Color(0.7f,0.9f,1,0.85f):Color.white;
-                // Monster look is cosmetic (by id); every enemy uses the same simulation stats.
-                string look="monsters/"+MonsterKinds[e.id%MonsterKinds.Length]+"_"+(((int)(sim.time*4)+e.id)%2);
+                // Look follows the enemy kind: bats are fast chasers, ghosts sweep past in a line event.
+                string kind=e.Sweeping?"ghost":e.fast?"bat":"slime";
+                string look="monsters/"+kind+"_"+(((int)(sim.time*4)+e.id)%2);
                 Sprite("enemy-shadow"+e.id,"items/shadow",e.pos+new Vector2(0,-0.4f),0.9f,0.4f,Color.white,0.02f);
                 if(!Sprite("enemy"+e.id,look,e.pos+new Vector2(0,0.15f),1.25f,1.25f,tint,0.1f-e.pos.y*0.0005f,e.pos.x>sim.player.x))
                     Item("enemy"+e.id,PrimitiveType.Capsule,e.pos,new Vector3(0.65f,0.5f,0.65f),tint);
@@ -280,7 +281,7 @@ namespace SurvivorLab {
                 GUI.Label(new Rect(65,700,1150,70),status);
                 return;
             }
-            GUI.Label(new Rect(35,55,1190,45),$"{(ai?"AI":"MANUAL")} | {sim.Spell.name} | HP {sim.hp:F1}/{sim.maxHp:F0}  Shield {sim.shield:F1} | LV {sim.level}  XP {sim.xp:F1}/{balance.RequiredXp(sim.level):F1} | {sim.time:F1}s | Kills {sim.kills}");
+            GUI.Label(new Rect(35,55,1190,45),$"{(ai?"AI":"MANUAL")} | {sim.Spell.name} | HP {sim.hp:F1}/{sim.maxHp:F0}  Shield {sim.shield:F1} | LV {sim.level}  XP {sim.xp:F1}/{balance.RequiredXp(sim.level):F1} | {sim.time:F1}s{(sim.WaveNumber>0?$" · Wave {sim.WaveNumber}/{balance.waves.Length}":"")} | Kills {sim.kills}");
             GUI.Box(new Rect(20,112,1240,24),"");
             var oldColor=GUI.color; GUI.color=new Color(0.3f,0.6f,1);
             GUI.DrawTexture(new Rect(22,114,1236*Mathf.Clamp01(sim.xp/balance.RequiredXp(sim.level)),20),Texture2D.whiteTexture); GUI.color=oldColor;

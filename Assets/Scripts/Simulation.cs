@@ -8,6 +8,8 @@ namespace SurvivorLab {
         public float burnAt,burnDamage,acidUntil,chillUntil,frozenUntil,freezeImmuneUntil,knockUntil,corruptionDamage;
         public int burnRemaining; public float burnInterval; public Vector2 knockVelocity;
         public float weakenUntil,weakenPercent,corruptionSpreadDamage;
+        public bool fast; public Vector2 sweep; public float sweepUntil; // sweepUntil>0: line-event enemy
+        public bool Sweeping { get { return sweepUntil > 0; } }
     }
     public class Drop { public Vector2 pos; public float xp; public bool potion, attracted; }
     public class Rock { public Vector2 pos; public float expires; }
@@ -38,7 +40,10 @@ namespace SurvivorLab {
         public string lastAutoChoice=""; public int automaticChoices;
         public IRewardChooser rewardChooser=RuleRewardChooser.Instance;
         public ElementDefinition ActiveElement { get { return infusions.Count==0?null:b.CombinedElement(infusions[0],infusions.Count>1?infusions[1]:null); } }
-        float castProgress, spawnAt, rockDistance, breathTime, regenAt, shieldAt, scrollAt;
+        float castProgress, spawnAt, rockDistance, breathTime, regenAt, shieldAt, scrollAt, topUpAt;
+        int lineIndex;
+        public WaveDefinition Wave { get { return b.HasWaves ? b.WaveAt(time) : null; } }
+        public int WaveNumber { get { if (!b.HasWaves) return 0; int n = 0; foreach (var w in b.waves) if (time >= w.start) n++; return n; } }
         bool wasStill = true; int nextId;
         readonly System.Random random;
         public SpellDefinition Spell { get { return b.spells[classIndex]; } }
@@ -136,25 +141,21 @@ namespace SurvivorLab {
                 rockDistance = (rockDistance + distance) % Spell.spacing;
             }
             rocks.RemoveAll(x => x.expires <= time);
-            while (time >= spawnAt) {
-                spawnAt += b.spawnInterval;
-                if (enemies.Count < b.maxEnemies) {
-                    float angle = (float)random.NextDouble() * Mathf.PI * 2;
-                    enemies.Add(new Enemy { id = nextId++, hp = b.enemyHp, pos = player + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * b.spawnRadius });
-                }
-            }
+            SpawnEnemies();
+            float waveSpeed = b.HasWaves ? Wave.speedScale : 1, waveDamage = b.HasWaves ? Wave.damageScale : 1;
             foreach (var e in enemies) {
                 if (e.hp <= 0) continue;
                 UpdateElementStatus(e);
                 if(e.hp<=0) continue;
-                float speed = b.enemySpeed;
+                float speed = b.enemySpeed * waveSpeed * (e.fast ? b.fastSpeedMultiplier : 1);
                 if (time < e.slowUntil) speed *= 1 - Param("frost_mark", "slowPercent") / 100;
                 if(time<e.chillUntil) speed*=1-b.Element("Ice").slowPercent/100;
                 if(time<e.frozenUntil) speed=0;
-                e.pos = Vector2.MoveTowards(e.pos, player, speed * dt);
+                if (e.Sweeping) e.pos += e.sweep * (speed / (b.enemySpeed * waveSpeed)) * dt;
+                else e.pos = Vector2.MoveTowards(e.pos, player, speed * dt);
                 if(time<e.knockUntil) e.pos+=e.knockVelocity*dt;
                 if ((e.pos - player).sqrMagnitude <= 0.64f && time >= e.contactAt) {
-                    e.contactAt = time + b.contactCooldown; TakeDamage(b.contactDamage*(time<e.weakenUntil?1-e.weakenPercent/100:1));
+                    e.contactAt = time + b.contactCooldown; TakeDamage(b.contactDamage*waveDamage*(time<e.weakenUntil?1-e.weakenPercent/100:1));
                     if (dead) break;
                 }
             }
@@ -182,7 +183,9 @@ namespace SurvivorLab {
             }
             slams.RemoveAll(x => time >= x.expires);
             ResolveElementExplosions();
-            enemies.RemoveAll(x => x.hp <= 0);
+            // Stragglers left far behind are recycled (no XP) so the spawner can place fresh enemies near the player.
+            float far = b.despawnDistance > 0 ? b.despawnDistance * b.despawnDistance : float.MaxValue;
+            enemies.RemoveAll(x => x.hp <= 0 || (x.Sweeping ? time >= x.sweepUntil : (x.pos - player).sqrMagnitude > far));
             float pickup = b.pickupRadius * (1 + Param("attraction", "pickupRadiusPercent") / 100);
             for (int i = drops.Count - 1; i >= 0; i--) {
                 var d=drops[i];
@@ -211,6 +214,47 @@ namespace SurvivorLab {
             if (time >= scrollAt) { scrollAt += b.scrollPeriod; if (owned.Count < b.scrolls.Length) rewards.Enqueue(new RewardRequest{scroll=true,level=level}); }
             EnsureOffer();
             won = time >= b.duration;
+        }
+        void SpawnEnemies() {
+            if (!b.HasWaves) {
+                while (time >= spawnAt) {
+                    spawnAt += b.spawnInterval;
+                    if (enemies.Count < b.maxEnemies) SpawnChaser(null);
+                }
+                return;
+            }
+            var wave = Wave;
+            while (time >= spawnAt) {
+                spawnAt += wave.spawnInterval;
+                for (int i = 0; i < wave.perSpawn && enemies.Count < b.maxEnemies; i++) SpawnChaser(wave);
+            }
+            // Keep pressure regardless of kill speed: refill toward the wave minimum.
+            if (time >= topUpAt) {
+                int chasers = 0; foreach (var e in enemies) if (e.hp > 0 && !e.Sweeping) chasers++;
+                for (int i = chasers; i < wave.minEnemies && i < chasers + wave.perSpawn && enemies.Count < b.maxEnemies; i++) SpawnChaser(wave);
+                topUpAt = time + b.topUpInterval;
+            }
+            while (b.lineEvents != null && lineIndex < b.lineEvents.Length && time >= b.lineEvents[lineIndex].time) SpawnLine(b.lineEvents[lineIndex++], wave);
+        }
+        void SpawnChaser(WaveDefinition wave) {
+            float angle;
+            // Blocking spawns appear ahead of a moving player so running in one direction is not free.
+            if (wave != null && stillTime <= 0 && random.NextDouble() < wave.blockChance)
+                angle = Mathf.Atan2(facing.y, facing.x) + ((float)random.NextDouble() - 0.5f) * b.blockSpreadDegrees * Mathf.Deg2Rad;
+            else angle = (float)random.NextDouble() * Mathf.PI * 2;
+            bool fast = wave != null && random.NextDouble() < wave.fastChance;
+            float hp = b.enemyHp * (wave != null ? wave.hpScale : 1) * (fast ? b.fastHpMultiplier : 1);
+            enemies.Add(new Enemy { id = nextId++, hp = hp, fast = fast, pos = player + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * b.spawnRadius });
+        }
+        void SpawnLine(LineEventDefinition line, WaveDefinition wave) {
+            float angle = (float)random.NextDouble() * Mathf.PI * 2;
+            Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), side = new Vector2(-dir.y, dir.x);
+            Vector2 origin = player - dir * b.lineDistance;
+            float gapCenter = ((float)random.NextDouble() - 0.5f) * 8, life = 2 * b.lineDistance / b.lineSpeed + 1;
+            for (float offset = -b.lineHalfLength; offset <= b.lineHalfLength; offset += b.lineSpacing) {
+                if (Mathf.Abs(offset - gapCenter) < line.gap / 2) continue;
+                enemies.Add(new Enemy { id = nextId++, hp = b.enemyHp * wave.hpScale, pos = origin + side * offset, sweep = dir * b.lineSpeed, sweepUntil = time + life });
+            }
         }
         void Cast() {
             if (classIndex == 0) {
